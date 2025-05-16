@@ -7,7 +7,170 @@
   <script src="https://kit.fontawesome.com/3846a067f2.js" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="styles.css">
 </head>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f2f2f2;
+    margin: 0;
+    padding: 10px;
+    transition: background-color 0.3s, color 0.3s;
+    text-transform: uppercase;
+  }
 
+  body.dark-mode {
+    background: #1e1e1e;
+    color: #f0f0f0;
+  }
+
+  .top-bar {
+    width: 100%;
+    background: white;
+    padding: 15px 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    box-sizing: border-box;
+    transition: background-color 0.3s;
+    z-index: 1;
+  }
+
+  body.dark-mode .top-bar {
+    background: #2a2a2a;
+  }
+
+  #searchBar {
+    padding: 10px;
+    width: 250px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    flex-shrink: 0;
+    text-transform: none;
+  }
+
+  body.dark-mode #searchBar {
+    background: #3a3a3a;
+    color: white;
+    border: 1px solid #666;
+  }
+
+  .filter-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .filter-buttons button {
+    background-color: #808080;
+    border: none;
+    color: white;
+    padding: 10px 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s, color 0.2s;
+  }
+
+  .filter-buttons button:hover {
+    background-color: #fffacd;
+    color: black;
+  }
+
+  .apps-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+  }
+
+  .app {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .app-box {
+    margin: 20px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    padding: 15px;
+    width: 200px;
+    transition: transform 0.2s, background-color 0.3s;
+    cursor: pointer;
+  }
+
+  body.dark-mode .app-box {
+    background: #2d2d2d;
+    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.05);
+  }
+
+  .app-box:hover {
+    transform: scale(1.05);
+  }
+
+  .app-box img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  .app-title {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  #darkModeToggle {
+    position: fixed;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    background-color: gray;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.3s;
+    z-index: 1000;
+    color: white;
+    font-size: 24px;
+  }
+
+  #darkModeToggle:hover {
+    background-color: #fffacd;
+  }
+
+  @media (max-width: 600px) {
+    .top-bar {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    #searchBar {
+      width: 100%;
+    }
+
+    .filter-buttons {
+      justify-content: center;
+    }
+  }
+</style>
+
+  
 <body class="dark-mode">
 
   <!--BUSCADOR-->
