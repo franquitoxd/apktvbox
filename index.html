@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TV STORE PREMIUM</title>
+  <script src="https://kit.fontawesome.com/3846a067f2.js" crossorigin="anonymous"></script>
+  
+  <style>
+    :root {
+      --bg-deep: #050505;
+      --glass-bg: rgba(20, 20, 20, 0.95);
+      --glass-border: 1px solid rgba(255, 255, 255, 0.1);
+      --accent: #e6cfa5; /* Cremita premium */
+      --text-main: #ffffff;
+      --text-muted: #aaaaaa;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background-color: var(--bg-deep);
+      background-image: radial-gradient(circle at 50% 0%, #1a1a1a 0%, #000 80%);
+      color: var(--text-main);
+      margin: 0; padding: 0;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* UTILS */
+    .hidden { display: none !important; }
+    .fade-in { animation: fadeIn 0.3s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+
+    /* EFECTO DE FOCO (TV) */
+    .select-fx { transition: all 0.2s ease; outline: none; }
+    .select-fx:focus, .app-box:focus {
+      transform: scale(1.05);
+      box-shadow: 0 0 0 3px var(--accent), 0 0 25px rgba(230, 207, 165, 0.4);
+      z-index: 10;
+      border-color: var(--accent);
+    }
+
+    /* TOP BAR */
+    .top-bar {
+      display: flex; align-items: center; gap: 20px;
+      padding: 20px 40px; position: sticky; top: 0; z-index: 50;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.95), transparent);
+    }
+
+    /* BUSCADOR */
+    .search-wrapper {
+      position: relative; background: rgba(255,255,255,0.05); border: var(--glass-border);
+      border-radius: 50px; padding: 10px 25px; display: flex; align-items: center; gap: 10px;
+      transition: 0.3s;
+    }
+    .search-wrapper:focus-within { border-color: var(--accent); background: rgba(0,0,0,0.8); }
+    #searchBar { background: transparent; border: none; color: white; outline: none; width: 220px; font-size: 16px; pointer-events: none; }
+    .search-active #searchBar { pointer-events: auto; }
+    .search-active { box-shadow: 0 0 0 3px var(--accent) inset !important; }
+
+    /* FILTROS */
+    .filter-scroll { display: flex; gap: 15px; overflow-x: auto; scrollbar-width: none; padding: 5px; }
+    .filter-btn {
+      background: rgba(255,255,255,0.05); border: var(--glass-border);
+      color: var(--text-muted); padding: 10px 20px; border-radius: 50px;
+      cursor: pointer; font-size: 13px; font-weight: 600; text-transform: uppercase; white-space: nowrap;
+    }
+    .filter-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
+
+    #adminIndicator {
+      margin-left: auto; font-size: 11px; color: var(--accent); border: 1px solid var(--accent);
+      padding: 5px 10px; border-radius: 4px; display: flex; align-items: center; gap: 5px; font-weight: bold;
+    }
+
+    /* APPS GRID */
+    .apps-container {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 40px; padding: 40px;
+    }
+    .app-box {
+      position: relative; aspect-ratio: 16/9; background: #111; border-radius: 16px;
+      overflow: hidden; cursor: pointer; border: var(--glass-border);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .app-box img { width: 100%; height: 100%; object-fit: cover; }
+    .app-overlay {
+      position: absolute; bottom: 0; left: 0; width: 100%; padding: 50px 20px 20px;
+      background: linear-gradient(to top, rgba(0,0,0,0.95), transparent);
+    }
+    .app-title { margin: 0; font-size: 18px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+
+    /* --- MODALES --- */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.92); backdrop-filter: blur(10px);
+      z-index: 100; display: flex; justify-content: center; align-items: center;
+    }
+
+    /* --- NUEVO DISEÑO DETALLES (MEDIANO Y DECORADO) --- */
+    .detail-card-medium {
+      width: 90%; max-width: 750px; /* Tamaño más normal */
+      background: #121212; 
+      border-radius: 20px;
+      border: 1px solid var(--accent); /* Decoración Borde */
+      padding: 30px;
+      box-shadow: 0 0 50px rgba(230, 207, 165, 0.15); /* Decoración Brillo */
+      display: flex; gap: 30px;
+      position: relative;
+      align-items: flex-start;
+    }
+
+    /* Columna Imagen */
+    .detail-left {
+      width: 250px; flex-shrink: 0;
+    }
+    .detail-cover {
+      width: 100%; aspect-ratio: 16/9; object-fit: cover;
+      border-radius: 12px; border: 1px solid rgba(255,255,255,0.2);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    }
+
+    /* Columna Info */
+    .detail-right {
+      flex: 1; display: flex; flex-direction: column;
+    }
+
+    #detailTitle { 
+      font-size: 32px; margin: 0 0 10px; color: white; 
+      text-transform: uppercase; font-weight: 800; border-bottom: 1px solid #333; padding-bottom: 10px;
+    }
+    
+    .tag-badge { 
+      font-size: 12px; color: var(--accent); text-transform: uppercase; 
+      font-weight: bold; letter-spacing: 1px; margin-bottom: 15px;
+    }
+
+    /* NUEVO: Descripción */
+    #detailDesc {
+        color: #ddd; font-size: 14px; line-height: 1.5;
+        margin-bottom: 25px;
+        max-height: 150px; overflow-y: auto; /* Por si escribes mucho */
+    }
+
+    /* Botones */
+    .btn-download-normal {
+      display: flex; justify-content: center; align-items: center; gap: 10px;
+      background: var(--accent); color: #000;
+      padding: 12px 25px; border-radius: 8px;
+      text-decoration: none; font-weight: 800; font-size: 16px;
+      text-transform: uppercase; letter-spacing: 1px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      transition: 0.3s;
+    }
+    .btn-download-normal:hover { background: white; transform: scale(1.02); }
+
+    .btn-back-clean {
+      background: transparent; border: none; color: var(--text-muted);
+      cursor: pointer; font-size: 12px; display: inline-flex; align-items: center; gap: 5px;
+      margin-bottom: 15px; padding: 5px 0;
+    }
+    .btn-back-clean:hover { color: white; }
+
+    /* --- ADMIN & AUTH FORMS --- */
+    .admin-form-card {
+      width: 450px; padding: 30px; background: #1a1a1a;
+      border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    }
+    .input-clean {
+      width: 100%; padding: 12px; background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;
+      color: white; outline: none; margin-bottom: 10px; box-sizing: border-box; font-size: 14px;
+    }
+    .input-clean:focus { border-color: var(--accent); background: rgba(255,255,255,0.1); }
+    textarea.input-clean { resize: none; height: 80px; font-family: inherit;}
+    
+    .btn-primary { width:100%; background: var(--accent); color: #000; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+    .btn-secondary { width:100%; background: transparent; border: 1px solid #555; color: #888; padding: 12px; border-radius: 8px; cursor: pointer; }
+    .btn-google { width: 100%; background: white; color: #333; border: none; padding: 12px; border-radius: 8px; font-weight: bold; display: flex; justify-content: center; gap: 10px; cursor: pointer; margin-bottom: 20px; }
+
+    /* MENU CONTEXTUAL */
+    #contextMenu {
+      position: absolute; background: #222; border: 1px solid #444;
+      border-radius: 8px; width: 160px; z-index: 500;
+    }
+    .ctx-item {
+      width: 100%; padding: 12px; background: transparent;
+      border: none; color: #eee; text-align: left; cursor: pointer; border-bottom: 1px solid #333; font-size: 14px;
+    }
+    .ctx-item:hover { background: var(--accent); color: #000; }
+    
+    .loading-msg { text-align: center; margin-top: 100px; color: #666; font-size: 16px; letter-spacing: 2px; text-transform: uppercase;}
+  </style>
+</head>
+<body>
+
+  <div class="top-bar">
+    <div class="search-wrapper select-fx" id="searchContainer" tabindex="0">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" id="searchBar" placeholder="Buscar..." readonly>
+    </div>
+    <div class="filter-scroll" id="filterContainer">
+      <button class="filter-btn active select-fx" data-tag="all" tabindex="0">TODO</button>
+    </div>
+    <div id="adminIndicator" class="hidden"><i class="fa-solid fa-crown"></i> ADMIN</div>
+  </div>
+
+  <div class="apps-container" id="appsGrid">
+    <div class="loading-msg">CARGANDO...</div>
+  </div>
+
+  <div id="detailsPage" class="modal-overlay hidden fade-in">
+    <div class="detail-card-medium">
+      
+      <div class="detail-left">
+        <button id="closeDetails" class="btn-back-clean select-fx">
+           <i class="fa-solid fa-arrow-left"></i> VOLVER
+        </button>
+        <img id="detailImage" class="detail-cover" src="" alt="Portada">
+      </div>
+
+      <div class="detail-right">
+        <h1 id="detailTitle">TITULO APP</h1>
+        
+        <span id="detailTag" class="tag-badge">Categoría</span>
+        
+        <p id="detailDesc">Aquí va la información de la aplicación...</p>
+
+        <div style="margin-top: auto; width: 100%;">
+            <a id="detailLink" href="#" target="_blank" class="btn-download-normal select-fx">
+                <i class="fa-solid fa-download"></i> DESCARGAR
+            </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="adminModal" class="modal-overlay hidden fade-in">
+    <div class="admin-form-card">
+      <h2 id="modalTitle" style="color:var(--accent); text-align:center; margin-bottom:20px;">GESTOR DE APPS</h2>
+      <form id="appForm">
+        <input type="hidden" id="editId">
+        
+        <input type="text" id="inpName" placeholder="Nombre" class="input-clean select-fx" required>
+        <input type="url" id="inpImage" placeholder="URL Imagen" class="input-clean select-fx" required>
+        <input type="url" id="inpLink" placeholder="Link descarga" class="input-clean select-fx" required>
+        <input type="text" id="inpTag" placeholder="Etiqueta (Ej: Juegos)" class="input-clean select-fx" required>
+        
+        <textarea id="inpDesc" placeholder="Información / Descripción de la app..." class="input-clean select-fx"></textarea>
+        
+        <div style="display:flex; gap:10px; margin-top:10px;">
+          <button type="button" id="closeAdmin" class="btn-secondary select-fx">Cancelar</button>
+          <button type="submit" class="btn-primary select-fx">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="authModal" class="modal-overlay hidden fade-in">
+    <div class="admin-form-card" style="text-align:center;">
+      <h2 style="color:white; font-size:16px; margin-bottom:20px;">ACCESO</h2>
+      <div id="loginPanel">
+        <button id="btnGoogle" class="btn-google select-fx"><i class="fa-brands fa-google"></i> Google</button>
+      </div>
+      <div id="logoutPanel" class="hidden">
+        <p id="userStatus" style="color:#aaa; margin-bottom:20px;"></p>
+        <button id="btnLogout" class="btn-secondary select-fx">Cerrar Sesión</button>
+      </div>
+      <button id="closeAuth" class="btn-secondary select-fx" style="margin-top:20px; border:none;">Cerrar</button>
+    </div>
+  </div>
+
+  <div id="contextMenu" class="hidden"></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, query, orderBy, doc, deleteDoc, updateDoc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBuEYx4pTsnhRJE37mVX38jgBIi5GyZ4fQ",
+      authDomain: "organizador-a8fa1.firebaseapp.com",
+      projectId: "organizador-a8fa1",
+      storageBucket: "organizador-a8fa1.firebasestorage.app",
+      messagingSenderId: "813072238246",
+      appId: "1:813072238246:web:5866f2684bade15f319667"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+
+    let allApps = [];
+    let userIsAdmin = false;
+    let isTyping = false;
+
+    // --- CARGA ---
+    async function loadApps() {
+      const g = document.getElementById('appsGrid');
+      g.innerHTML = '<div class="loading-msg"><i class="fa-solid fa-spinner fa-spin"></i> CARGANDO...</div>';
+      try {
+        const q = query(collection(db, "apps"), orderBy("name"));
+        const snap = await getDocs(q);
+        allApps = [];
+        const tags = new Set();
+        snap.forEach(d => {
+          const dt = d.data();
+          allApps.push({id: d.id, ...dt});
+          if(dt.tag) tags.add(dt.tag.toLowerCase().trim());
+        });
+        renderFilters([...tags]);
+        renderApps(allApps);
+      } catch(e) { g.innerHTML = '<div class="loading-msg" style="color:red">ERROR CONEXIÓN</div>'; }
+    }
+
+    function renderApps(list) {
+      const g = document.getElementById('appsGrid');
+      g.innerHTML = '';
+      if(list.length === 0) { g.innerHTML = '<div class="loading-msg">No hay resultados</div>'; return; }
+      list.forEach(a => {
+        const div = document.createElement('div');
+        div.className = 'app-box select-fx';
+        div.tabIndex = 0;
+        div.innerHTML = `<img src="${a.image}"><div class="app-overlay"><h3 class="app-title">${a.name}</h3></div>`;
+        div.onclick = () => openDetails(a);
+        div.onkeydown = (e) => { if(e.key === 'Enter') openDetails(a); };
+        div.oncontextmenu = (e) => openContextMenu(e, a.id);
+        g.appendChild(div);
+      });
+    }
+
+    function renderFilters(tags) {
+      const c = document.getElementById('filterContainer');
+      c.innerHTML = '<button class="filter-btn active select-fx" data-tag="all" tabindex="0">TODO</button>';
+      tags.forEach(t => {
+        const b = document.createElement('button');
+        b.className = 'filter-btn select-fx';
+        b.innerText = t; b.dataset.tag = t; b.tabIndex = 0;
+        b.onclick = () => {
+          document.querySelectorAll('.filter-btn').forEach(x => x.classList.remove('active'));
+          b.classList.add('active');
+          filterApps(t);
+        }
+        c.appendChild(b);
+      });
+    }
+
+    function filterApps(tag) {
+      const term = document.getElementById('searchBar').value.toLowerCase();
+      renderApps(allApps.filter(a => {
+        return (tag === 'all' || (a.tag && a.tag.toLowerCase() === tag)) && a.name.toLowerCase().includes(term);
+      }));
+    }
+
+    // BUSCADOR LOGICA
+    const searchContainer = document.getElementById('searchContainer');
+    const searchInput = document.getElementById('searchBar');
+    searchContainer.addEventListener('keydown', (e) => {
+      if(e.key === 'Enter') {
+        isTyping = true;
+        searchContainer.classList.add('search-active');
+        searchInput.readOnly = false;
+        searchInput.focus();
+        e.stopPropagation();
+      }
+    });
+    searchInput.addEventListener('keydown', (e) => {
+      if(e.key === 'Enter' || e.key === 'Escape' || e.key === 'ArrowDown') {
+        isTyping = false;
+        searchContainer.classList.remove('search-active');
+        searchInput.readOnly = true;
+        searchContainer.focus();
+        if(e.key === 'ArrowDown') document.querySelector('.filter-btn').focus();
+        e.stopPropagation();
+      }
+    });
+    searchInput.addEventListener('input', () => {
+      filterApps(document.querySelector('.filter-btn.active')?.dataset.tag || 'all');
+    });
+
+    // --- DETALLES ---
+    function openDetails(a) {
+      document.getElementById('detailTitle').innerText = a.name;
+      document.getElementById('detailImage').src = a.image;
+      document.getElementById('detailTag').innerText = a.tag;
+      document.getElementById('detailLink').href = a.downloadLink;
+      
+      // Mostrar descripción (o texto por defecto)
+      document.getElementById('detailDesc').innerText = a.description || "Sin información adicional.";
+      
+      document.getElementById('detailsPage').classList.remove('hidden');
+      setTimeout(() => document.getElementById('detailLink').focus(), 100);
+    }
+    document.getElementById('closeDetails').onclick = () => {
+      document.getElementById('detailsPage').classList.add('hidden');
+      document.getElementById('searchContainer').focus();
+    }
+
+    // --- AUTH ---
+    async function checkRole(u) {
+      const ref = doc(db, "users", u.uid);
+      const snap = await getDoc(ref);
+      if(snap.exists()) {
+        const d = snap.data();
+        if(d.rol === 'admin' || d.role === 'admin') {
+          userIsAdmin = true;
+          document.getElementById('adminIndicator').classList.remove('hidden');
+          document.getElementById('userStatus').innerText = "ADMINISTRADOR";
+        } else {
+          userIsAdmin = false;
+          document.getElementById('adminIndicator').classList.add('hidden');
+          document.getElementById('userStatus').innerText = "USUARIO";
+        }
+      } else {
+        await setDoc(ref, { email: u.email, rol: 'usuario' });
+        userIsAdmin = false;
+        document.getElementById('userStatus').innerText = "NUEVO";
+      }
+      document.getElementById('loginPanel').classList.add('hidden');
+      document.getElementById('logoutPanel').classList.remove('hidden');
+    }
+
+    onAuthStateChanged(auth, u => {
+      if(u) checkRole(u);
+      else {
+        userIsAdmin = false;
+        document.getElementById('adminIndicator').classList.add('hidden');
+        document.getElementById('loginPanel').classList.remove('hidden');
+        document.getElementById('logoutPanel').classList.add('hidden');
+      }
+    });
+
+    document.getElementById('btnGoogle').onclick = () => signInWithPopup(auth, provider).then(() => document.getElementById('authModal').classList.add('hidden'));
+    document.getElementById('btnLogout').onclick = () => signOut(auth).then(() => location.reload());
+    document.addEventListener('keydown', e => { if(e.ctrlKey && e.altKey) document.getElementById('authModal').classList.remove('hidden'); });
+    document.getElementById('closeAuth').onclick = () => document.getElementById('authModal').classList.add('hidden');
+
+    // --- CRUD ---
+    function openContextMenu(e, id) {
+      if(!userIsAdmin) return;
+      e.preventDefault();
+      const m = document.getElementById('contextMenu');
+      if(id) {
+        m.innerHTML = `<button class="ctx-item select-fx" id="cxEd">Editar</button><button class="ctx-item select-fx" id="cxDel" style="color:#ff6666">Borrar</button>`;
+        setTimeout(() => {
+          document.getElementById('cxEd').onclick = () => editApp(id);
+          document.getElementById('cxDel').onclick = () => deleteApp(id);
+          m.querySelector('button').focus();
+        },0);
+      } else {
+        m.innerHTML = `<button class="ctx-item select-fx" id="cxAdd">Nueva App</button>`;
+        setTimeout(() => {
+            document.getElementById('cxAdd').onclick = openAdmin;
+            m.querySelector('button').focus();
+        }, 0);
+      }
+      m.style.top = e.pageY + 'px'; m.style.left = e.pageX + 'px';
+      m.classList.remove('hidden');
+    }
+    document.addEventListener('contextmenu', e => { if(userIsAdmin && !e.target.closest('.app-box')) openContextMenu(e, null); });
+    document.addEventListener('click', () => document.getElementById('contextMenu').classList.add('hidden'));
+
+    function openAdmin() {
+      document.getElementById('adminModal').classList.remove('hidden');
+      document.getElementById('appForm').reset();
+      document.getElementById('modalTitle').innerText = "AGREGAR";
+      document.getElementById('editId').value = "";
+    }
+    function editApp(id) {
+      const a = allApps.find(x => x.id === id);
+      if(!a) return;
+      openAdmin();
+      document.getElementById('modalTitle').innerText = "EDITAR";
+      document.getElementById('editId').value = id;
+      document.getElementById('inpName').value = a.name;
+      document.getElementById('inpImage').value = a.image;
+      document.getElementById('inpLink').value = a.downloadLink;
+      document.getElementById('inpTag').value = a.tag;
+      // Cargar descripcion
+      document.getElementById('inpDesc').value = a.description || "";
+    }
+    async function deleteApp(id) {
+      if(confirm("¿Borrar?")) { await deleteDoc(doc(db, "apps", id)); loadApps(); }
+    }
+    
+    document.getElementById('appForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const id = document.getElementById('editId').value;
+      const d = {
+        name: document.getElementById('inpName').value,
+        image: document.getElementById('inpImage').value,
+        downloadLink: document.getElementById('inpLink').value,
+        tag: document.getElementById('inpTag').value,
+        description: document.getElementById('inpDesc').value // Guardar descripción
+      };
+      try {
+        if(id) await updateDoc(doc(db, "apps", id), d);
+        else await addDoc(collection(db, "apps"), d);
+        document.getElementById('adminModal').classList.add('hidden');
+        loadApps();
+      } catch(e) { alert("ERROR PERMISOS: " + e.message); }
+    };
+    document.getElementById('closeAdmin').onclick = () => document.getElementById('adminModal').classList.add('hidden');
+
+    // --- NAV TECLADO ---
+    document.addEventListener('keydown', e => {
+      if(isTyping) return;
+      const activeModal = document.querySelector('.modal-overlay:not(.hidden)');
+      
+      if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) {
+        e.preventDefault();
+        let container = activeModal ? activeModal : document.body;
+        
+        let selectors = '.select-fx, .app-box, .filter-btn, .ctx-item, .search-wrapper';
+        const focusable = Array.from(container.querySelectorAll(selectors))
+            .filter(el => el.offsetParent !== null);
+        
+        if(focusable.length === 0) return;
+        const idx = focusable.indexOf(document.activeElement);
+        let next = idx;
+
+        if(idx === -1) next = 0;
+        else {
+            if(e.key === 'ArrowRight' || e.key === 'ArrowDown') next++;
+            else next--;
+            if(next >= focusable.length) next = 0;
+            if(next < 0) next = focusable.length - 1;
+        }
+        focusable[next].focus();
+        focusable[next].scrollIntoView({block:'center', behavior:'smooth'});
+      }
+      
+      if(e.key === 'Enter' && document.activeElement && !isTyping) {
+          if(document.activeElement.id !== 'searchContainer') document.activeElement.click();
+      }
+    });
+
+    loadApps();
+  </script>
+</body>
+</html>
