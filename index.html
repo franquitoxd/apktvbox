@@ -333,11 +333,26 @@
 
     function renderFilters(tags) {
       const c = document.getElementById('filterContainer');
-      c.innerHTML = '<button class="filter-btn active select-fx" data-tag="all" tabindex="0">TODO</button>';
+      c.innerHTML = ''; 
+
+      const btnAll = document.createElement('button');
+      btnAll.className = 'filter-btn active select-fx'; 
+      btnAll.innerText = 'TODO';
+      btnAll.dataset.tag = 'all';
+      btnAll.tabIndex = 0;
+      
+      btnAll.onclick = () => {
+        document.querySelectorAll('.filter-btn').forEach(x => x.classList.remove('active'));
+        btnAll.classList.add('active');
+        filterApps('all');
+      };
+      c.appendChild(btnAll);
       tags.forEach(t => {
         const b = document.createElement('button');
         b.className = 'filter-btn select-fx';
-        b.innerText = t; b.dataset.tag = t; b.tabIndex = 0;
+        b.innerText = t; 
+        b.dataset.tag = t; 
+        b.tabIndex = 0;
         b.onclick = () => {
           document.querySelectorAll('.filter-btn').forEach(x => x.classList.remove('active'));
           b.classList.add('active');
@@ -346,7 +361,6 @@
         c.appendChild(b);
       });
     }
-
     function filterApps(tag) {
       const term = document.getElementById('searchBar').value.toLowerCase();
       renderApps(allApps.filter(a => {
@@ -540,4 +554,5 @@
     loadApps();
   </script>
 </body>
+
 </html>
