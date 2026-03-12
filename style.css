@@ -1,0 +1,191 @@
+:root {
+  --bg-deep: #050505;
+  --glass-bg: rgba(20, 20, 20, 0.95);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.1);
+  --accent: #e6cfa5; /* Cremita premium */
+  --text-main: #ffffff;
+  --text-muted: #aaaaaa;
+}
+
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background-color: var(--bg-deep);
+  background-image: radial-gradient(circle at 50% 0%, #1a1a1a 0%, #000 80%);
+  color: var(--text-main);
+  margin: 0; padding: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* UTILS */
+.hidden { display: none !important; }
+.fade-in { animation: fadeIn 0.3s ease-out; }
+@keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+
+/* EFECTO DE FOCO (TV) */
+.select-fx { transition: all 0.2s ease; outline: none; }
+.select-fx:focus, .app-box:focus {
+  transform: scale(1.05);
+  box-shadow: 0 0 0 3px var(--accent), 0 0 15px rgba(230, 207, 165, 0.3);
+  z-index: 10;
+  border-color: var(--accent);
+}
+
+/* TOP BAR */
+.top-bar {
+  display: flex; align-items: center; gap: 20px;
+  padding: 20px 40px; position: sticky; top: 0; z-index: 50;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.95), transparent);
+}
+
+/* BUSCADOR */
+.search-wrapper {
+  position: relative; background: rgba(255,255,255,0.05); border: var(--glass-border);
+  border-radius: 50px; padding: 10px 25px; display: flex; align-items: center; gap: 10px;
+  transition: 0.3s;
+}
+.search-wrapper:focus-within { border-color: var(--accent); background: rgba(0,0,0,0.8); }
+#searchBar { background: transparent; border: none; color: white; outline: none; width: 220px; font-size: 16px; pointer-events: none; }
+.search-active #searchBar { pointer-events: auto; }
+.search-active { box-shadow: 0 0 0 3px var(--accent) inset !important; }
+
+/* FILTROS */
+.filter-scroll { display: flex; gap: 15px; overflow-x: auto; scrollbar-width: none; padding: 5px; }
+.filter-btn {
+  background: rgba(255,255,255,0.05); border: var(--glass-border);
+  color: var(--text-muted); padding: 10px 20px; border-radius: 50px;
+  cursor: pointer; font-size: 13px; font-weight: 600; text-transform: uppercase; white-space: nowrap;
+}
+.filter-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
+
+#adminIndicator {
+  margin-left: auto; font-size: 11px; color: var(--accent); border: 1px solid var(--accent);
+  padding: 5px 10px; border-radius: 4px; display: flex; align-items: center; gap: 5px; font-weight: bold;
+}
+
+/* APPS GRID */
+.apps-container {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 40px; padding: 40px;
+}
+.app-box {
+  position: relative; aspect-ratio: 16/9; background: #111; border-radius: 16px;
+  overflow: hidden; cursor: pointer; border: var(--glass-border);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+}
+.app-box img { width: 100%; height: 100%; object-fit: cover; }
+.app-overlay {
+  position: absolute; bottom: 0; left: 0; width: 100%; padding: 50px 20px 20px;
+  background: linear-gradient(to top, rgba(0,0,0,0.95), transparent);
+}
+.app-title { margin: 0; font-size: 18px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+
+/* NUMERO DE APP */
+.app-number {
+  position: absolute; top: 10px; left: 10px; background: var(--accent);
+  color: #000; font-weight: 900; font-size: 16px; padding: 5px 12px;
+  border-radius: 8px; z-index: 5; box-shadow: 0 2px 10px rgba(0,0,0,0.8);
+}
+
+/* OVERLAY DE NUMEROS TIPEAOS */
+#numberOverlay {
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.85); color: var(--accent);
+  font-size: 80px; font-weight: 900; padding: 20px 50px;
+  border-radius: 20px; border: 2px solid var(--accent);
+  z-index: 9999; box-shadow: 0 0 50px rgba(0,0,0,0.8);
+}
+
+/* --- MODALES --- */
+.modal-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.95);
+  z-index: 100; display: flex; justify-content: center; align-items: center;
+}
+
+/* --- DISENO DETALLES --- */
+.detail-card-medium {
+  width: 90%; max-width: 750px;
+  background: #121212; 
+  border-radius: 20px;
+  border: 1px solid var(--accent);
+  padding: 30px;
+  box-shadow: 0 0 30px rgba(230, 207, 165, 0.1);
+  display: flex; gap: 30px;
+  position: relative;
+  align-items: flex-start;
+}
+
+.detail-left { width: 250px; flex-shrink: 0; }
+.detail-cover {
+  width: 100%; aspect-ratio: 16/9; object-fit: cover;
+  border-radius: 12px; border: 1px solid rgba(255,255,255,0.2);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.8);
+}
+
+.detail-right { flex: 1; display: flex; flex-direction: column; }
+
+#detailTitle { 
+  font-size: 32px; margin: 0 0 10px; color: white; 
+  text-transform: uppercase; font-weight: 800; border-bottom: 1px solid #333; padding-bottom: 10px;
+}
+  
+.tag-badge { 
+  font-size: 12px; color: var(--accent); text-transform: uppercase; 
+  font-weight: bold; letter-spacing: 1px; margin-bottom: 15px;
+}
+
+#detailDesc {
+    color: #ddd; font-size: 14px; line-height: 1.5;
+    margin-bottom: 25px;
+    max-height: 150px; overflow-y: auto;
+}
+
+.btn-download-normal {
+  display: flex; justify-content: center; align-items: center; gap: 10px;
+  background: var(--accent); color: #000;
+  padding: 12px 25px; border-radius: 8px;
+  text-decoration: none; font-weight: 800; font-size: 16px;
+  text-transform: uppercase; letter-spacing: 1px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  transition: 0.3s;
+}
+.btn-download-normal:hover { background: white; transform: scale(1.02); }
+
+.btn-back-clean {
+  background: transparent; border: none; color: var(--text-muted);
+  cursor: pointer; font-size: 12px; display: inline-flex; align-items: center; gap: 5px;
+  margin-bottom: 15px; padding: 5px 0;
+}
+.btn-back-clean:hover { color: white; }
+
+/* --- ADMIN & AUTH FORMS --- */
+.admin-form-card {
+  width: 450px; padding: 30px; background: #1a1a1a;
+  border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+.input-clean {
+  width: 100%; padding: 12px; background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;
+  color: white; outline: none; margin-bottom: 10px; box-sizing: border-box; font-size: 14px;
+}
+.input-clean:focus { border-color: var(--accent); background: rgba(255,255,255,0.1); }
+textarea.input-clean { resize: none; height: 80px; font-family: inherit;}
+  
+.btn-primary { width:100%; background: var(--accent); color: #000; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+.btn-secondary { width:100%; background: transparent; border: 1px solid #555; color: #888; padding: 12px; border-radius: 8px; cursor: pointer; }
+.btn-google { width: 100%; background: white; color: #333; border: none; padding: 12px; border-radius: 8px; font-weight: bold; display: flex; justify-content: center; gap: 10px; cursor: pointer; margin-bottom: 20px; }
+
+/* MENU CONTEXTUAL */
+#contextMenu {
+  position: absolute; background: #222; border: 1px solid #444;
+  border-radius: 8px; width: 160px; z-index: 500;
+}
+.ctx-item {
+  width: 100%; padding: 12px; background: transparent;
+  border: none; color: #eee; text-align: left; cursor: pointer; border-bottom: 1px solid #333; font-size: 14px;
+}
+.ctx-item:hover { background: var(--accent); color: #000; }
+  
+.loading-msg { text-align: center; margin-top: 100px; color: #666; font-size: 16px; letter-spacing: 2px; text-transform: uppercase;}
