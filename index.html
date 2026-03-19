@@ -9,6 +9,34 @@
 </head>
 <body>
 
+  <div id="passwordLock" class="modal-overlay hidden" style="background:var(--bg-deep); z-index:99999;">
+    <div class="admin-form-card" style="text-align:center;">
+      <h2 style="color:var(--accent); margin-bottom:20px;">ACCESO RESTRINGIDO</h2>
+      <p style="color:#aaa; margin-bottom:20px; font-size:14px;">Ingrese la contrasena para continuar</p>
+      <form id="lockForm">
+        <input type="password" id="inpLockPassword" class="input-clean select-fx" placeholder="Contrasena" readonly>
+        
+        <div class="numpad">
+          <button type="button" class="num-btn select-fx" data-val="1">1</button>
+          <button type="button" class="num-btn select-fx" data-val="2">2</button>
+          <button type="button" class="num-btn select-fx" data-val="3">3</button>
+          <button type="button" class="num-btn select-fx" data-val="4">4</button>
+          <button type="button" class="num-btn select-fx" data-val="5">5</button>
+          <button type="button" class="num-btn select-fx" data-val="6">6</button>
+          <button type="button" class="num-btn select-fx" data-val="7">7</button>
+          <button type="button" class="num-btn select-fx" data-val="8">8</button>
+          <button type="button" class="num-btn select-fx" data-val="9">9</button>
+          <button type="button" class="num-btn select-fx btn-del" data-val="del"><i class="fa-solid fa-delete-left"></i></button>
+          <button type="button" class="num-btn select-fx" data-val="0">0</button>
+          <button type="button" class="num-btn select-fx btn-clear" data-val="clear">C</button>
+        </div>
+
+        <button type="submit" class="btn-primary select-fx" style="margin-top:15px;">ENTRAR</button>
+        <p id="lockError" style="color:#ff6666; margin-top:15px; font-size:14px;" class="hidden">Contrasena incorrecta</p>
+      </form>
+    </div>
+  </div>
+
   <div class="top-bar">
     <div class="search-wrapper select-fx" id="searchContainer" tabindex="0">
       <i class="fa-solid fa-magnifying-glass"></i>
@@ -28,28 +56,22 @@
 
   <div id="detailsPage" class="modal-overlay hidden fade-in">
     <div class="detail-card-medium">
-      
       <div class="detail-left">
         <button id="closeDetails" class="btn-back-clean select-fx">
            <i class="fa-solid fa-arrow-left"></i> VOLVER
         </button>
         <img id="detailImage" class="detail-cover" src="" alt="Portada">
       </div>
-
       <div class="detail-right">
         <h1 id="detailTitle">TITULO APP</h1>
-        
         <span id="detailTag" class="tag-badge">Categoria</span>
-        
         <p id="detailDesc">Aqui va la informacion de la aplicacion...</p>
-
         <div style="margin-top: auto; width: 100%;">
             <a id="detailLink" href="#" target="_blank" class="btn-download-normal select-fx">
                 <i class="fa-solid fa-download"></i> DESCARGAR
             </a>
         </div>
       </div>
-
     </div>
   </div>
 
@@ -58,16 +80,51 @@
       <h2 id="modalTitle" style="color:var(--accent); text-align:center; margin-bottom:20px;">GESTOR DE APPS</h2>
       <form id="appForm">
         <input type="hidden" id="editId">
-        
         <input type="text" id="inpName" placeholder="Nombre" class="input-clean select-fx" required>
         <input type="url" id="inpImage" placeholder="URL Imagen" class="input-clean select-fx" required>
         <input type="url" id="inpLink" placeholder="Link descarga" class="input-clean select-fx" required>
         <input type="text" id="inpTag" placeholder="Etiqueta (Ej: Juegos)" class="input-clean select-fx" required>
-        
         <textarea id="inpDesc" placeholder="Informacion / Descripcion de la app..." class="input-clean select-fx"></textarea>
-        
         <div style="display:flex; gap:10px; margin-top:10px;">
           <button type="button" id="closeAdmin" class="btn-secondary select-fx">Cancelar</button>
+          <button type="submit" class="btn-primary select-fx">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="changePassModal" class="modal-overlay hidden fade-in">
+    <div class="admin-form-card">
+      <h2 style="color:var(--accent); text-align:center; margin-bottom:20px;">SEGURIDAD</h2>
+      
+      <div style="margin-bottom:20px;">
+        <button type="button" id="btnToggleLock" class="btn-secondary select-fx" style="width:100%; font-weight:bold; transition:0.3s;">ESTADO: CARGANDO...</button>
+      </div>
+
+      <form id="changePassForm">
+        <input type="password" id="inpCurrentPass" placeholder="Contrasena actual" class="input-clean select-fx" readonly>
+        <input type="password" id="inpNewPass" placeholder="Contrasena nueva" class="input-clean select-fx" readonly required>
+        <input type="password" id="inpRepeatPass" placeholder="Repetir contrasena" class="input-clean select-fx" readonly required>
+        
+        <div class="numpad">
+          <button type="button" class="num-btn select-fx" data-val="1">1</button>
+          <button type="button" class="num-btn select-fx" data-val="2">2</button>
+          <button type="button" class="num-btn select-fx" data-val="3">3</button>
+          <button type="button" class="num-btn select-fx" data-val="4">4</button>
+          <button type="button" class="num-btn select-fx" data-val="5">5</button>
+          <button type="button" class="num-btn select-fx" data-val="6">6</button>
+          <button type="button" class="num-btn select-fx" data-val="7">7</button>
+          <button type="button" class="num-btn select-fx" data-val="8">8</button>
+          <button type="button" class="num-btn select-fx" data-val="9">9</button>
+          <button type="button" class="num-btn select-fx btn-del" data-val="del"><i class="fa-solid fa-delete-left"></i></button>
+          <button type="button" class="num-btn select-fx" data-val="0">0</button>
+          <button type="button" class="num-btn select-fx btn-clear" data-val="clear">C</button>
+        </div>
+
+        <p id="changePassError" style="color:#ff6666; margin-top:10px; font-size:14px; text-align:center;" class="hidden"></p>
+        
+        <div style="display:flex; gap:10px; margin-top:15px;">
+          <button type="button" id="closeChangePass" class="btn-secondary select-fx">Cancelar</button>
           <button type="submit" class="btn-primary select-fx">Guardar</button>
         </div>
       </form>
